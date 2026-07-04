@@ -2158,6 +2158,9 @@ static int aicwf_parse_usb(struct aic_usb_dev *usb_dev, struct usb_interface *in
 		}else if(usb_dev->chipid == PRODUCT_ID_AIC8800D81X2 ||
                 usb_dev->chipid == PRODUCT_ID_AIC8800D89X2){
             //TODO
+        }else if(usb_dev->chipid == PRODUCT_ID_AIC8800D81){
+            // WiFi-only variant — single interface is valid
+            AICWFDBG(LOGINFO, "AIC8800D81 single-interface (WiFi-only)\n");
         }else{
 			ret = -ENODEV;
 			goto exit;
@@ -2347,9 +2350,9 @@ static int aicwf_usb_chipmatch(struct aic_usb_dev *usb_dev, u16_l vid, u16_l pid
         usb_dev->chipid = PRODUCT_ID_AIC8800DW;
 		AICWFDBG(LOGINFO, "%s USE AIC8800DW\r\n", __func__);
         return 0;
-    }else if(pid == USB_PRODUCT_ID_AIC8800D81 || pid == USB_PRODUCT_ID_AIC8800D41){
+    }else if(pid == USB_PRODUCT_ID_AIC8800D81 || pid == USB_PRODUCT_ID_AIC8800D80 || pid == USB_PRODUCT_ID_AIC8800D41){
         usb_dev->chipid = PRODUCT_ID_AIC8800D81;
-        aicwf_usb_rx_aggr = true;
+        aicwf_usb_rx_aggr = false; // usbip/5GHz: avoid 48KB aggregated URBs
         AICWFDBG(LOGINFO, "%s USE AIC8800D81\r\n", __func__);
         return 0;
     }else if(pid == USB_PRODUCT_ID_AIC8800D81X2){
@@ -2660,6 +2663,7 @@ static struct usb_device_id aicwf_usb_id_table[] = {
     {USB_DEVICE(USB_VENDOR_ID_AIC, USB_PRODUCT_ID_AIC8800DW)},
     {USB_DEVICE_AND_INTERFACE_INFO(USB_VENDOR_ID_AIC_V2, USB_PRODUCT_ID_AIC8800D81X2, 0xff, 0xff, 0xff)},
     {USB_DEVICE(USB_VENDOR_ID_AIC_V2, USB_PRODUCT_ID_AIC8800D89X2)},
+    {USB_DEVICE_AND_INTERFACE_INFO(USB_VENDOR_ID_AIC_V2, USB_PRODUCT_ID_AIC8800D80, 0xff, 0xff, 0xff)},
     {USB_DEVICE_AND_INTERFACE_INFO(USB_VENDOR_ID_AIC_V2, USB_PRODUCT_ID_AIC8800D80N, 0xff, 0xff, 0xff)},
     {USB_DEVICE_AND_INTERFACE_INFO(USB_VENDOR_ID_AIC_V2, USB_PRODUCT_ID_AIC8800D80LN, 0xff, 0xff, 0xff)},
     {USB_DEVICE_AND_INTERFACE_INFO(USB_VENDOR_ID_AIC_V2, USB_PRODUCT_ID_AIC8800D80WN, 0xff, 0xff, 0xff)},
